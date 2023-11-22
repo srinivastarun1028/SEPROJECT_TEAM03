@@ -94,3 +94,38 @@ def main():
         data_processor.clean_data()  # Clean data
         resolved_issues, unresolved_issues, resolved_discussions, unresolved_discussions, \
         success_percentage_issues, success_percentage_discussions = data_processor.process_data()
+
+# Display results
+        print("Issues:")
+        print(f"Total Issues: {len(issues_data['Sources'])}")
+        print(f"Resolved Issues: {resolved_issues}")
+        print(f"Unresolved Issues: {unresolved_issues}")
+        print(f"Success Percentage (Issues): {success_percentage_issues:.2f}%")
+
+        # Display pie chart for Issues
+        Plotter.plot_pie_chart(
+            ['Resolved Issues', 'Unresolved Issues'],
+            [resolved_issues, unresolved_issues],
+            'Issues',
+            len(issues_data['Sources']),
+            resolved_issues,
+            unresolved_issues,
+            success_percentage_issues
+        )
+
+        print("\nDiscussions:")
+        print(f"Total Discussions: {len(discussions_data['Sources'])}")
+        print(f"Resolved Discussions: {resolved_discussions}")
+        print(f"Unresolved Discussions: {unresolved_discussions}")
+        print(f"Success Percentage (Discussions): {success_percentage_discussions:.2f}%")
+
+        # Display pie chart for Discussions
+        Plotter.plot_pie_chart(
+            ['Resolved Discussions', 'Unresolved Discussions'],
+            [resolved_discussions, unresolved_discussions],
+            'Discussions',
+            len(discussions_data['Sources']),
+            resolved_discussions,
+            unresolved_discussions,
+            success_percentage_discussions
+        )
