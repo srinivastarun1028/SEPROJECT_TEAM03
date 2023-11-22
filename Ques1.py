@@ -81,3 +81,16 @@ class Plotter:
         ax.axis('equal')
         plt.title(title)
         plt.show()
+def main():
+    issues_file_path = 'C:\\Users\\Srinivas Tarun\\SE\\snapshot_20230831\\20230831_061759_issue_sharings.json'
+    discussions_file_path = 'C:\\Users\\Srinivas Tarun\\SE\\snapshot_20230831\\20230831_061926_discussion_sharings.json'
+
+    issues_data = load_json_file(issues_file_path)
+    discussions_data = load_json_file(discussions_file_path)
+
+    if issues_data is not None and discussions_data is not None:
+        # Data processing using DataProcessor
+        data_processor = DataProcessor(issues_data, discussions_data)
+        data_processor.clean_data()  # Clean data
+        resolved_issues, unresolved_issues, resolved_discussions, unresolved_discussions, \
+        success_percentage_issues, success_percentage_discussions = data_processor.process_data()
