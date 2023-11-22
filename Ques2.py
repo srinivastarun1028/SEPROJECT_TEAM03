@@ -24,6 +24,8 @@ def preprocess_and_clean(json_data):
             cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip()
             return cleaned_text
         return None
+
+    # Define a function to convert date strings to datetime objects
     def convert_to_datetime(date_str):
         if date_str is not None:
             return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
@@ -55,6 +57,8 @@ def preprocess_and_clean(json_data):
                 ]
 
     return json_data
+
+
 def extract_prompt_counts(source, state):
     """Extract the prompt counts from the given source and state."""
     prompts = []
@@ -68,6 +72,26 @@ def calculate_average(prompt_list):
     if not prompt_list:
         return 0
     return round(sum(prompt_list) / len(prompt_list))
+
+def plot_side_by_side_bar_chart(categories, values_pr, values_issue, chart_title):
+    """Plot side-by-side bar charts with interactive colors."""
+    bar_width = 0.35  # Define the width of the bars
+
+    fig, ax = plt.subplots()
+
+    pr_bars = ax.bar(np.arange(len(categories)) - bar_width/2, values_pr, bar_width, label='Pull Request', color='skyblue')
+    issue_bars = ax.bar(np.arange(len(categories)) + bar_width/2, values_issue, bar_width, label='Issue', color='lightcoral')
+
+    # Adding labels and title
+    ax.set_xlabel('Issue State')
+    ax.set_ylabel('Count')
+    ax.set_title(chart_title)
+    ax.set_xticks(np.arange(len(categories)))
+    ax.set_xticklabels(categories)
+    ax.legend()
+
+    # Show the bar chart
+    plt.show()
 
 def AvgPromptCount(json_file_path_pr, json_file_path_issue, chart_title):
     """Calculate and plot the average prompt counts for open and closed states."""
@@ -87,41 +111,24 @@ def AvgPromptCount(json_file_path_pr, json_file_path_issue, chart_title):
         else:
             opened_pr.extend(extract_prompt_counts(source, 'OPEN'))
 
-    avg_opened_pr = calculate_averag(opened_pr)
-    avg_closed_pr = calculate_averag(closed_pr)
+    avg_opened_pr = calculate_average(opened_pr)
+    avg_closed_pr = calculate_average(closed_pr)
 
     for source in cleaned_data_issue['Sources']:
         if source['State'] == "CLOSED":
-            closed_issue.extend(extract_prompt_count(source, 'CLOSED'))
+            closed_issue.extend(extract_prompt_counts(source, 'CLOSED'))
         else:
-            opened_issue.extend(extract_prompt_count(source, 'OPEN'))
+            opened_issue.extend(extract_prompt_counts(source, 'OPEN'))
 
     avg_opened_issue = calculate_average(opened_issue)
     avg_closed_issue = calculate_average(closed_issue)
 
+    categories = ['Open', 'Closed']
 
-    plot_side_by_side_bar_chart(categories, [avg_opened_pr, avg_closed_pr], [avg_opened_issue, avg_closed_issue], chart_title)    
-    def plot_side_by_side_bar_chart(categories, values_pr, values_issue, chart_title):
-    """Plot side-by-side bar charts with interactive colors."""
-    bar_width = 0.35  # Define the width of the bars
+    plot_side_by_side_bar_chart(categories, [avg_opened_pr, avg_closed_pr], [avg_opened_issue, avg_closed_issue], chart_title)
 
-    fig, ax = plt.subplots()
 
-    pr_bars = ax.bar(np.arange(len(categories)) - bar_width/2, values_pr, bar_width, label='Pull Request', color='skyblue')
-    issue_bars = ax.bar(np.arange(len(categories)) + bar_width/2, values_issue, bar_width, label='Issue', color='lightcoral')
+json_file_path_pr = 'snapshot/20230831_060603_pr_sharings.json'
+json_file_path_issue = 'snapshot/20230831_061759_issue_sharings.json'
 
-    # Adding labels and title
-    ax.set_xlabel('Issue State')
-    ax.set_ylabel('Count')
-    ax.set_title(chart_title)
-    ax.set_xticks(np.arange(len(categories)))
-    ax.set_xticklabels(categories)
-    ax.legend()
-
-    # Show the bar chart
-    plt.show()
-    
-    json_file_path_pr = '/content/drive/MyDrive/DevGpt/20230831_060603_pr_sharings.json'
-    json_file_path_issue = '/content/drive/MyDrive/DevGpt/20230831_061759_issue_sharings.json'
-
-AvgPromptCount(json_file_path_pr, json_file_path_issue, 'Pull Request vs Issue')
+AvgPromptCount(json_file_path_pr, json_file_path_issue, 'Pull Request vs Issue')
