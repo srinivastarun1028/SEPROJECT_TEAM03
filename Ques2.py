@@ -121,3 +121,8 @@ def AvgPromptCount(json_file_path_pr, json_file_path_issue, chart_title):
 
     # Show the bar chart
     plt.show()
+    
+    json_file_path_pr = '/content/drive/MyDrive/DevGpt/20230831_060603_pr_sharings.json'
+    json_file_path_issue = '/content/drive/MyDrive/DevGpt/20230831_061759_issue_sharings.json'
+
+AvgPromptCount(json_file_path_pr, json_file_path_issue, 'Pull Request vs Issue')
