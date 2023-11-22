@@ -55,3 +55,49 @@ def preprocess_and_clean(json_data):
                 ]
 
     return json_data
+def extract_prompt_counts(source, state):
+    """Extract the prompt counts from the given source and state."""
+    prompts = []
+    for entry in source['ChatgptSharing']:
+        if 'NumberOfPrompts' in entry and entry['NumberOfPrompts'] is not None:
+            prompts.append(entry['NumberOfPrompts'])
+    return prompts
+
+def calculate_average(prompt_list):
+    """Calculate the average of a list of prompt counts."""
+    if not prompt_list:
+        return 0
+    return round(sum(prompt_list) / len(prompt_list))
+def AvgPromptCount(json_file_path_pr, json_file_path_issue, chart_title):
+    """Calculate and plot the average prompt counts for open and closed states."""
+
+    data_pr = load_json(json_file_path_pr)
+    cleaned_data_pr = preprocess_and_clean(data_pr)
+
+    data_issue = load_json(json_file_path_issue)
+    cleaned_data_issue = preprocess_and_clean(data_issue)
+
+    opened_pr, closed_pr = [], []
+    opened_issue, closed_issue = [], []
+
+    for source in cleaned_data_pr['Sources']:
+        if source['State'] == "CLOSED":
+            closed_pr.extend(extract_prompt_counts(source, 'CLOSED'))
+        else:
+            opened_pr.extend(extract_prompt_counts(source, 'OPEN'))
+
+    avg_opened_pr = calculate_average(opened_pr)
+    avg_closed_pr = calculate_average(closed_pr)
+
+    for source in cleaned_data_issue['Sources']:
+        if source['State'] == "CLOSED":
+            closed_issue.extend(extract_prompt_counts(source, 'CLOSED'))
+        else:
+            opened_issue.extend(extract_prompt_counts(source, 'OPEN'))
+
+    avg_opened_issue = calculate_average(opened_issue)
+    avg_closed_issue = calculate_average(closed_issue)
+
+    categories = ['Open', 'Closed']
+
+    plot_side_by_side_bar_chart(categories, [avg_opened_pr, avg_closed_pr], [avg_opened_issue, avg_closed_issue], chart_title)
