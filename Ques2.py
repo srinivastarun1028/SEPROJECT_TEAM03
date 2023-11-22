@@ -101,3 +101,23 @@ def AvgPromptCount(json_file_path_pr, json_file_path_issue, chart_title):
     categories = ['Open', 'Closed']
 
     plot_side_by_side_bar_chart(categories, [avg_opened_pr, avg_closed_pr], [avg_opened_issue, avg_closed_issue], chart_title)
+    
+    def plot_side_by_side_bar_chart(categories, values_pr, values_issue, chart_title):
+    """Plot side-by-side bar charts with interactive colors."""
+    bar_width = 0.35  # Define the width of the bars
+
+    fig, ax = plt.subplots()
+
+    pr_bars = ax.bar(np.arange(len(categories)) - bar_width/2, values_pr, bar_width, label='Pull Request', color='skyblue')
+    issue_bars = ax.bar(np.arange(len(categories)) + bar_width/2, values_issue, bar_width, label='Issue', color='lightcoral')
+
+    # Adding labels and title
+    ax.set_xlabel('Issue State')
+    ax.set_ylabel('Count')
+    ax.set_title(chart_title)
+    ax.set_xticks(np.arange(len(categories)))
+    ax.set_xticklabels(categories)
+    ax.legend()
+
+    # Show the bar chart
+    plt.show()
