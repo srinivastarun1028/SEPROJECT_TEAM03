@@ -1,19 +1,6 @@
 import json
 import matplotlib.pyplot as plt
 
-def load_json_file(file_path):
-    try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            return data
-    except FileNotFoundError as e:
-        print(f"Error: File not found at path {e.filename}")
-        return None
-    except json.JSONDecodeError:
-        print(f"Error: Invalid JSON format in the file {file_path}")
-        return None
-    
-
 class DataProcessor:
     def __init__(self, issues_data, discussions_data):
         self.issues_data = issues_data
@@ -57,7 +44,7 @@ class DataProcessor:
 
         return resolved_issues, unresolved_issues, resolved_discussions, unresolved_discussions, \
                success_percentage_issues, success_percentage_discussions
-   
+
 class Plotter:
     @staticmethod
     def plot_pie_chart(labels, sizes, title, total, resolved, unresolved, success_percentage):
@@ -81,9 +68,22 @@ class Plotter:
         ax.axis('equal')
         plt.title(title)
         plt.show()
+
+def load_json_file(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            return data
+    except FileNotFoundError as e:
+        print(f"Error: File not found at path {e.filename}")
+        return None
+    except json.JSONDecodeError:
+        print(f"Error: Invalid JSON format in the file {file_path}")
+        return None
+
 def main():
-    issues_file_path = 'C:\\Users\\Srinivas Tarun\\SE\\snapshot_20230831\\20230831_061759_issue_sharings.json'
-    discussions_file_path = 'C:\\Users\\Srinivas Tarun\\SE\\snapshot_20230831\\20230831_061926_discussion_sharings.json'
+    issues_file_path = 'snapshot\\20230831_061759_issue_sharings.json'
+    discussions_file_path = 'snapshot\\20230831_061926_discussion_sharings.json'
 
     issues_data = load_json_file(issues_file_path)
     discussions_data = load_json_file(discussions_file_path)
@@ -95,7 +95,7 @@ def main():
         resolved_issues, unresolved_issues, resolved_discussions, unresolved_discussions, \
         success_percentage_issues, success_percentage_discussions = data_processor.process_data()
 
-# Display results
+        # Display results
         print("Issues:")
         print(f"Total Issues: {len(issues_data['Sources'])}")
         print(f"Resolved Issues: {resolved_issues}")
@@ -129,3 +129,6 @@ def main():
             unresolved_discussions,
             success_percentage_discussions
         )
+
+if __name__ == "__main__":
+    main()
