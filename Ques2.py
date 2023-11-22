@@ -68,6 +68,7 @@ def calculate_average(prompt_list):
     if not prompt_list:
         return 0
     return round(sum(prompt_list) / len(prompt_list))
+
 def AvgPromptCount(json_file_path_pr, json_file_path_issue, chart_title):
     """Calculate and plot the average prompt counts for open and closed states."""
 
@@ -86,22 +87,20 @@ def AvgPromptCount(json_file_path_pr, json_file_path_issue, chart_title):
         else:
             opened_pr.extend(extract_prompt_counts(source, 'OPEN'))
 
-    avg_opened_pr = calculate_average(opened_pr)
-    avg_closed_pr = calculate_average(closed_pr)
+    avg_opened_pr = calculate_averag(opened_pr)
+    avg_closed_pr = calculate_averag(closed_pr)
 
     for source in cleaned_data_issue['Sources']:
         if source['State'] == "CLOSED":
-            closed_issue.extend(extract_prompt_counts(source, 'CLOSED'))
+            closed_issue.extend(extract_prompt_count(source, 'CLOSED'))
         else:
-            opened_issue.extend(extract_prompt_counts(source, 'OPEN'))
+            opened_issue.extend(extract_prompt_count(source, 'OPEN'))
 
     avg_opened_issue = calculate_average(opened_issue)
     avg_closed_issue = calculate_average(closed_issue)
 
-    categories = ['Open', 'Closed']
 
-    plot_side_by_side_bar_chart(categories, [avg_opened_pr, avg_closed_pr], [avg_opened_issue, avg_closed_issue], chart_title)
-    
+    plot_side_by_side_bar_chart(categories, [avg_opened_pr, avg_closed_pr], [avg_opened_issue, avg_closed_issue], chart_title)    
     def plot_side_by_side_bar_chart(categories, values_pr, values_issue, chart_title):
     """Plot side-by-side bar charts with interactive colors."""
     bar_width = 0.35  # Define the width of the bars
