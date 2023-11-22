@@ -26,3 +26,27 @@ def load_json_file(file_path):
         unresolved_discussions = len(self.discussions_data['Sources']) - resolved_discussions
 
         return resolved_issues, unresolved_issues, resolved_discussions, unresolved_discussions
+    
+    class Plotter:
+    @staticmethod
+    def plot_pie_chart(labels, sizes, title, total, resolved, unresolved, success_percentage):
+        colors = ['#66b3ff', '#99ff99', '#ffcc99', '#ff6666']
+
+        fig, ax = plt.subplots()
+        wedges, texts, autotexts = ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, colors=colors,
+                                          wedgeprops=dict(width=0.3))
+
+        plt.setp(autotexts, size=8, weight="bold")
+
+        # Display counts and success percentage on the pie chart
+        count_str = f"Total: {total}\nResolved: {resolved}\nUnresolved: {unresolved}"
+        success_percentage_str = f"Success Percentage: {success_percentage:.2f}%"
+
+        ax.text(0, 0, count_str, horizontalalignment='center', verticalalignment='center',
+                fontsize=10, weight='bold', transform=ax.transAxes)
+        ax.text(0, -0.3, success_percentage_str, horizontalalignment='center', verticalalignment='center',
+                fontsize=10, weight='bold', transform=ax.transAxes)
+
+        ax.axis('equal')
+        plt.title(title)
+        plt.show()
