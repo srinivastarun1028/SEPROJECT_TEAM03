@@ -1,0 +1,37 @@
+import json
+from radon.complexity import cc_visit
+from radon.metrics import mi_visit
+
+# Replace 'your_file_path.json' with the actual path to your JSON file
+file_path = 'snapshot\20230907_110036_commit_sharings.json'
+
+# Read JSON data from the file
+with open(file_path, 'r') as file:
+    data = json.load(file)
+    
+# Function to calculate cyclomatic complexity
+def calculate_cyclomatic_complexity(code):
+    # Split code into lines and remove empty lines and comments
+    lines = [line.strip() for line in code.split('\n') if line.strip() and not line.strip().startswith('//')]
+
+    # Initialize complexity with 1 (base complexity)
+    complexity = 1
+
+    # Count decision points
+    for line in lines:
+        if 'if (' in line or 'while (' in line or 'for (' in line:
+            complexity += 1
+
+    return complexity
+
+# Iterate through conversations and print Java content with cyclomatic complexity
+for source in data.get("Sources", []):
+    for chatgpt_sharing in source.get("ChatgptSharing", []):
+        for conversation in chatgpt_sharing.get("Conversations", []):
+            for code_snippet in conversation.get("ListOfCode", []):
+                if code_snippet.get("Type") == "java":
+                    java_code = code_snippet.get("Content")
+                    print("java Code:")
+                    print(java_code)
+                    j_complexity = calculate_cyclomatic_complexity(java_code)
+                    print(f"Cyclomatic Complexity for Java code: {j_complexity}")
