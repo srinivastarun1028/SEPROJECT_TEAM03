@@ -1,0 +1,71 @@
+import json
+from radon.complexity import cc_visit
+from radon.metrics import mi_visit
+import matplotlib.pyplot as plt
+import numpy as np
+
+l1 = []
+l2 = []
+l3=[]
+# Replace 'your_file_path.json' with the actual path to your JSON file
+file_path = 'snapshot\\20230907_110036_commit_sharings.json'
+
+# Read JSON data from the file
+with open(file_path, 'r') as file:
+    data = json.load(file)
+    
+# Function to calculate cyclomatic complexity
+def calculate_cyclomatic_complexity(code):
+    # Split code into lines and remove empty lines and comments
+    lines = [line.strip() for line in code.split('\n') if line.strip() and not line.strip().startswith('//')]
+
+    # Initialize complexity with 1 (base complexity)
+    complexity = 1
+
+    # Count decision points
+    for line in lines:
+        if 'if (' in line or 'while (' in line or 'for (' in line:
+            complexity += 1
+
+    return complexity
+
+# Iterate through conversations and print JavaScript content with cyclomatic complexity
+for source in data.get("Sources", []):
+    for chatgpt_sharing in source.get("ChatgptSharing", []):
+        for conversation in chatgpt_sharing.get("Conversations", []):
+            for code_snippet in conversation.get("ListOfCode", []):
+                if code_snippet.get("Type") == "javascript":
+                    javascript_code = code_snippet.get("Content")
+                    js_complexity = calculate_cyclomatic_complexity(javascript_code)
+                    l1.append(js_complexity)
+                    print(f"Cyclomatic Complexity for JavaScript code: {js_complexity}")
+                elif code_snippet.get("Type") == "java":
+                    java_code = code_snippet.get("Content")
+                    j_complexity = calculate_cyclomatic_complexity(java_code)
+                    l2.append(j_complexity)
+                    print(f"Cyclomatic Complexity for Java code: {j_complexity}")
+                elif code_snippet.get("Type") == "python":
+                    python_code = code_snippet.get("Content")
+                    py_complexity = calculate_cyclomatic_complexity(python_code)
+                    l3.append(py_complexity)
+                    print(f"Cyclomatic Complexity for Python code: {py_complexity}")
+                   
+print(l1)
+print(l2)
+print(l3)
+# Combine the lists into a list of lists
+all_metrics = [l1, l2, l3]
+
+
+
+# Calculate the mean for each language
+mean_metrics = [np.mean(metrics) for metrics in all_metrics]
+
+# Plotting using matplotlib bar graph
+languages = ['JavaScript', 'Java', 'Python']
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.bar(languages, mean_metrics, color=['blue', 'orange', 'green'])
+ax.set_title('Comparison of Mean Metrics for Each Language')
+ax.set_ylabel('Mean Metric Values')
+
+plt.show()
